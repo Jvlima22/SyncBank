@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { BankConnections } from "@/components/banking/BankConnections";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -61,7 +62,7 @@ const availableBanks = [
 
 export default function Accounts() {
   const navigate = useNavigate();
-  const { accounts, loading, createAccount, updateAccount, deleteAccount } = useAccounts();
+  const { accounts, loading, createAccount, updateAccount, deleteAccount, refetch } = useAccounts();
   const [showBalances, setShowBalances] = useState(true);
   const [syncing, setSyncing] = useState<string | null>(null);
   const [connectDialogOpen, setConnectDialogOpen] = useState(false);
@@ -192,18 +193,14 @@ export default function Accounts() {
               )}
               {showBalances ? "Ocultar" : "Mostrar"}
             </Button>
-            <Button variant="outline" onClick={handleSyncAll}>
-              <RefreshCw
-                className={cn("mr-2 h-4 w-4", syncing === "all" && "animate-spin")}
-              />
-              Sincronizar
-            </Button>
-            <Button className="gap-2" onClick={() => setConnectDialogOpen(true)}>
+            <Button variant="outline" className="gap-2" onClick={() => setConnectDialogOpen(true)}>
               <Plus className="h-4 w-4" />
-              Conectar Banco
+              Conta manual
             </Button>
           </div>
         </div>
+
+        <BankConnections onSynced={() => refetch()} />
 
         {/* Open Finance Info */}
         <Alert className="bg-primary/5 border-primary/20">

@@ -204,12 +204,25 @@ Deno.serve(async (req) => {
       const itemId: string | undefined = ev.itemId ?? ev.item?.id;
       if (!itemId) return json(req, { ok: true });
       const { data: conn } = await admin.from("bank_connections").select("user_id").eq("pluggy_item_id", itemId).maybeSingle();
-      if (!conn) return json(req, { ok: true, ignored: true });
       if (String(ev.event ?? "").startsWith("item/deleted")) {
-        await admin.from("bank_connections").update({ status: "DELETED" }).eq("pluggy_item_id", itemId);
-      } else {
-        await syncItem(admin, conn.user_id, itemId);
+        if (conn) await admin.from("bank_connections").update({ status: "DELETED" }).eq("pluggy_item_id", itemId);
+        return json(req, { ok: true });
       }
+      let userId = conn?.user_id as string | undefined;
+      if (!userId) {
+        // Conexão nova: confirma direto no Pluggy (não confia no corpo do webhook)
+        // que o item foi criado por um usuário real deste SyncBank.
+        const item = await pluggy(`/items/${itemId}`).catch(() => null);
+        const cu = item?.clientUserId;
+        if (!cu) return json(req, { ok: true, ignored: true });
+        const { data: u } = await admin.auth.admin.getUserById(cu);
+        if (!u?.user) return json(req, { ok: true, ignored: true });
+        userId = cu;
+      }
+      // Itens ainda conectando: registra e espera o próximo evento
+      await syncItem(admin, userId!, itemId).catch(async (e) => {
+        console.error("sync via webhook falhou", e);
+      });
       return json(req, { ok: true });
     }
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Search, Plus } from "lucide-react";
+import { Bell, Search, Plus, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
-export function Header() {
+export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { profile } = useProfile();
@@ -119,13 +119,16 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/80 backdrop-blur-xl px-6">
-        <div className="flex items-center gap-4">
-          <div className="relative">
+      <header className="sticky top-0 z-30 flex h-[72px] items-center justify-between gap-3 bg-background/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <button onClick={onMenuClick} className="rounded-xl border border-border bg-card p-2 lg:hidden" aria-label="Abrir menu">
+            <Menu className="h-5 w-5" />
+          </button>
+          <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Buscar transações, contas, metas..."
-              className="w-80 pl-10 bg-secondary border-0 focus-visible:ring-1"
+              placeholder="Buscar transações..."
+              className="h-10 w-full rounded-full border-border bg-card pl-10 shadow-none focus-visible:ring-1"
               value={searchValue}
               onChange={(e) => {
                 const value = e.target.value;
@@ -138,7 +141,7 @@ export function Header() {
             />
 
             {searchOpen && (
-              <div className="absolute mt-1 w-80 rounded-md border border-border bg-popover text-popover-foreground shadow-md z-50">
+              <div className="absolute mt-1 w-full rounded-xl border border-border bg-popover text-popover-foreground shadow-md z-50">
                 <Command>
                   <CommandList>
                     {searchResults.length === 0 ? (
@@ -180,29 +183,27 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="glow" size="sm" className="gap-2" onClick={handleNewTransaction}>
+          <Button variant="glow" size="sm" className="h-10 gap-2 rounded-full px-4" onClick={handleNewTransaction}>
             <Plus className="h-4 w-4" />
-            Nova Transação
+            <span className="hidden sm:inline">Novo lançamento</span>
           </Button>
 
           <Button
             variant="ghost"
             size="icon"
-            className="relative"
+            className="relative h-10 w-10 rounded-full border border-border bg-card"
             onClick={() => navigate("/notifications")}
+            aria-label="Notificações"
           >
-            <Bell className="h-5 w-5" />
-            <span className="absolute -top-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-[10px] font-medium text-destructive-foreground">
-              3
-            </span>
+            <Bell className="h-[18px] w-[18px]" />
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex items-center gap-3 pl-3 border-l border-border cursor-pointer">
-                <div className="text-right hidden sm:block">
-                  <p className="text-sm font-medium">{displayName}</p>
-                  <p className="text-xs text-muted-foreground">Premium</p>
+              <div className="flex cursor-pointer items-center gap-3">
+                <div className="hidden text-right md:block">
+                  <p className="text-sm font-semibold leading-tight">{displayName}</p>
+                  <p className="text-xs text-muted-foreground">Conta pessoal</p>
                 </div>
                 <Avatar className="h-9 w-9 border-2 border-primary/20">
                   <AvatarImage src={profile?.avatar_url || ""} />

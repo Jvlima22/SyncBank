@@ -1,3 +1,6 @@
+import { useTheme } from "next-themes";
+import { MfaSetup } from "@/components/auth/MfaSetup";
+import { supabase as sb } from "@/integrations/supabase/client";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
@@ -34,6 +37,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { supabase } from "@/integrations/supabase/client";
 
 const Settings = () => {
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { profile, loading, updateProfile, refetch } = useProfile();
@@ -395,26 +399,6 @@ const Settings = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="current-password">Senha atual</Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                      id="current-password"
-                      type={showPassword ? "text" : "password"}
-                      className="pl-10 pr-10"
-                    />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
                   <Label htmlFor="new-password">Nova senha</Label>
                   <Input id="new-password" type="password" className="pl-3" />
                 </div>
@@ -424,25 +408,23 @@ const Settings = () => {
                   <Input id="confirm-password" type="password" className="pl-3" />
                 </div>
 
-                <Button onClick={() => toast.success("Senha alterada com sucesso!")}>Alterar senha</Button>
+                <Button
+                  onClick={async () => {
+                    const np = (document.getElementById("new-password") as HTMLInputElement)?.value || "";
+                    const cp = (document.getElementById("confirm-password") as HTMLInputElement)?.value || "";
+                    if (np.length < 8) return toast.error("A nova senha precisa ter 8+ caracteres");
+                    if (np !== cp) return toast.error("As senhas não conferem");
+                    const { error } = await sb.auth.updateUser({ password: np });
+                    if (error) return toast.error(error.message);
+                    toast.success("Senha alterada com sucesso!");
+                  }}
+                >
+                  Alterar senha
+                </Button>
               </CardContent>
             </Card>
 
-            <Card className="bg-card border-border animate-slide-up" style={{ animationDelay: "50ms" }}>
-              <CardHeader>
-                <CardTitle>Autenticação de Dois Fatores</CardTitle>
-                <CardDescription>Adicione uma camada extra de segurança</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex items-center justify-between p-4 rounded-xl bg-secondary/50">
-                  <div>
-                    <p className="font-medium">2FA via Authenticator</p>
-                    <p className="text-sm text-muted-foreground">Use Google Authenticator ou similar</p>
-                  </div>
-                  <Button variant="outline">Configurar</Button>
-                </div>
-              </CardContent>
-            </Card>
+            <MfaSetup />
           </TabsContent>
 
           {/* Appearance Tab */}
@@ -455,7 +437,7 @@ const Settings = () => {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label>Tema</Label>
-                  <Select defaultValue="dark">
+                  <Select value={theme || "light"} onValueChange={setTheme}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -465,28 +447,6 @@ const Settings = () => {
                       <SelectItem value="system">Sistema</SelectItem>
                     </SelectContent>
                   </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Cor de destaque</Label>
-                  <div className="flex gap-3">
-                    {["emerald", "blue", "purple", "orange", "pink"].map((color) => (
-                      <button
-                        key={color}
-                        className={`w-10 h-10 rounded-full border-2 border-transparent hover:border-foreground transition-all ${
-                          color === "emerald"
-                            ? "bg-emerald-500 ring-2 ring-emerald-500 ring-offset-2 ring-offset-background"
-                            : color === "blue"
-                            ? "bg-blue-500"
-                            : color === "purple"
-                            ? "bg-purple-500"
-                            : color === "orange"
-                            ? "bg-orange-500"
-                            : "bg-pink-500"
-                        }`}
-                      />
-                    ))}
-                  </div>
                 </div>
 
                 <div className="space-y-2">

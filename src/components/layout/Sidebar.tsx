@@ -47,12 +47,14 @@ interface SidebarProps {
 export function Logo({ collapsed }: { collapsed?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl gradient-primary shadow-glow">
-        <svg viewBox="0 0 24 24" className="h-5 w-5 text-primary-foreground" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round">
-          <path d="M5 9a7 7 0 0 1 12-3l2 2M19 15a7 7 0 0 1-12 3l-2-2" />
-          <path d="M19 4v4h-4M5 20v-4h4" />
-        </svg>
-      </div>
+      <img
+        src="/icons/logo-96.png"
+        srcSet="/icons/logo-96.png 2x"
+        alt="SyncBank"
+        width={36}
+        height={36}
+        className="h-9 w-9 shrink-0 rounded-xl shadow-glow"
+      />
       {!collapsed && (
         <span className="text-lg font-extrabold tracking-tight">
           SYNC<span className="text-primary">BANK</span>

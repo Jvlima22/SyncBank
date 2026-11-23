@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "next-themes";
+import { PwaManager } from "@/components/pwa/PwaManager";
 import Index from "./pages/Index";
 import Transactions from "./pages/Transactions";
 import Accounts from "./pages/Accounts";
@@ -21,6 +22,7 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <ThemeProvider attribute="class" defaultTheme="light" storageKey="syncbank-theme">
+  <PwaManager />
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <TooltipProvider>

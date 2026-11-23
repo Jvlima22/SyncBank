@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { NEW_TX_EVENT } from "./BottomNav";
+import { Logo } from "./Sidebar";
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -60,6 +62,12 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
       setSearchOpen(false);
     }
   };
+
+  useEffect(() => {
+    const open = () => setDialogOpen(true);
+    window.addEventListener(NEW_TX_EVENT, open);
+    return () => window.removeEventListener(NEW_TX_EVENT, open);
+  }, []);
 
   const handleNewTransaction = () => {
     setDialogOpen(true);
@@ -121,9 +129,9 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
     <>
       <header className="sticky top-0 z-30 flex h-[calc(64px+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] sm:h-[calc(72px+env(safe-area-inset-top))] items-center justify-between gap-3 bg-background/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
         <div className="flex min-w-0 flex-1 items-center gap-3">
-          <button onClick={onMenuClick} className="rounded-xl border border-border bg-card p-2 lg:hidden" aria-label="Abrir menu">
-            <Menu className="h-5 w-5" />
-          </button>
+          <div className="shrink-0 lg:hidden [&_span.text-lg]:hidden sm:[&_span.text-lg]:inline">
+            <Logo />
+          </div>
           <div className="relative w-full max-w-sm">
             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
             <Input
@@ -183,9 +191,9 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="glow" size="sm" className="h-10 gap-2 rounded-full px-4" onClick={handleNewTransaction}>
+          <Button variant="glow" size="sm" className="hidden h-10 gap-2 rounded-full px-4 lg:inline-flex" onClick={handleNewTransaction}>
             <Plus className="h-4 w-4" />
-            <span className="hidden sm:inline">Novo lançamento</span>
+            <span>Novo lançamento</span>
           </Button>
 
           <Button

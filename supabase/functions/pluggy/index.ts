@@ -240,7 +240,8 @@ Deno.serve(async (req) => {
       const options: Record<string, unknown> = {
         clientUserId: user.id,
         webhookUrl: `${SUPABASE_URL}/functions/v1/pluggy/webhook`,
-        avoidDuplicates: true,
+        // MeuPluggy compartilha 1 conta por autorização: permitimos várias conexões
+        // (uma por banco). Transações não duplicam: external_id é único.
       };
       const res = await pluggy("/connect_token", {
         method: "POST",

@@ -230,7 +230,7 @@ export default function Goals() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
               Metas Financeiras
             </h1>
             <p className="text-muted-foreground">
@@ -244,7 +244,7 @@ export default function Goals() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1 max-sm:[&_.p-6]:p-4">
           <Card className="glass">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">

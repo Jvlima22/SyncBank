@@ -122,7 +122,7 @@ export default function Transactions() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Transações</h1>
+            <h1 className="text-2xl font-bold text-foreground sm:text-3xl">Transações</h1>
             <p className="text-muted-foreground">
               Gerencie todas as suas movimentações financeiras
             </p>
@@ -134,7 +134,7 @@ export default function Transactions() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1 max-sm:[&_.p-6]:p-4">
           <Card className="glass">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
@@ -193,7 +193,7 @@ export default function Transactions() {
         {/* Filters */}
         <Card className="glass">
           <CardContent className="p-4">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -203,9 +203,9 @@ export default function Transactions() {
                   className="pl-10"
                 />
               </div>
-              <div className="flex gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:flex">
                 <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                  <SelectTrigger className="w-[160px]">
+                  <SelectTrigger className="w-full sm:w-[160px]">
                     <Filter className="mr-2 h-4 w-4" />
                     <SelectValue placeholder="Categoria" />
                   </SelectTrigger>
@@ -218,7 +218,7 @@ export default function Transactions() {
                   </SelectContent>
                 </Select>
                 <Select value={typeFilter} onValueChange={setTypeFilter}>
-                  <SelectTrigger className="w-[140px]">
+                  <SelectTrigger className="w-full sm:w-[140px]">
                     <SelectValue placeholder="Tipo" />
                   </SelectTrigger>
                   <SelectContent>
@@ -247,12 +247,15 @@ export default function Transactions() {
                 filteredTransactions.map((transaction) => (
                   <div
                     key={transaction.id}
-                    className="flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
+                    className="flex items-center justify-between gap-3 p-3 transition-colors hover:bg-muted/50 sm:p-4"
                   >
-                    <div className="flex items-center gap-4">
+                    <div
+                      className="flex min-w-0 flex-1 cursor-pointer items-center gap-3 sm:gap-4"
+                      onClick={() => handleViewDetails(transaction)}
+                    >
                       <div
                         className={cn(
-                          "flex h-10 w-10 items-center justify-center rounded-full",
+                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-full",
                           transaction.type === "income"
                             ? "bg-success/10"
                             : "bg-destructive/10"
@@ -264,14 +267,14 @@ export default function Transactions() {
                           <ArrowUpRight className="h-5 w-5 text-destructive" />
                         )}
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground">
+                      <div className="min-w-0">
+                        <p className="truncate font-medium text-foreground">
                           {transaction.description}
                         </p>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <span>{transaction.account || "Manual"}</span>
-                          <span>•</span>
-                          <span>{transaction.method || "N/A"}</span>
+                        <div className="flex items-center gap-2 truncate text-xs text-muted-foreground sm:text-sm">
+                          <span className="truncate">{transaction.account || "Manual"}</span>
+                          <span className="hidden sm:inline">•</span>
+                          <span className="hidden sm:inline">{transaction.method || "N/A"}</span>
                           <span>•</span>
                           <span>
                             {new Date(transaction.date).toLocaleDateString("pt-BR")}
@@ -279,7 +282,7 @@ export default function Transactions() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex shrink-0 items-center gap-1 sm:gap-4">
                       <Badge
                         variant="secondary"
                         className="hidden sm:inline-flex"
@@ -289,7 +292,7 @@ export default function Transactions() {
                       <div className="text-right">
                         <p
                           className={cn(
-                            "font-semibold",
+                            "tabular whitespace-nowrap text-sm font-semibold sm:text-base",
                             transaction.type === "income"
                               ? "text-success"
                               : "text-foreground"

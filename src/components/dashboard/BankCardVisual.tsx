@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { usePrivacy } from "@/hooks/usePrivacy";
 import { Link } from "react-router-dom";
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -37,6 +38,8 @@ function Chip() {
 
 export function BankCardVisual({ cards, holder }: { cards: BankCardData[]; holder: string }) {
   const [idx, setIdx] = useState(0);
+  const touchX = useRef<number | null>(null);
+  const { mask } = usePrivacy();
 
   if (cards.length === 0) {
     return (
@@ -59,7 +62,17 @@ export function BankCardVisual({ cards, holder }: { cards: BankCardData[]; holde
 
   return (
     <div className="space-y-3">
-      <div className="bank-card relative aspect-[1.7/1] w-full overflow-hidden rounded-2xl p-5 text-white shadow-glow sm:p-6">
+      <div
+        className="bank-card relative aspect-[1.7/1] w-full touch-pan-y select-none overflow-hidden rounded-2xl p-5 text-white shadow-glow sm:p-6"
+        onTouchStart={(e) => (touchX.current = e.touches[0].clientX)}
+        onTouchEnd={(e) => {
+          if (touchX.current === null || cards.length < 2) return;
+          const dx = e.changedTouches[0].clientX - touchX.current;
+          touchX.current = null;
+          if (Math.abs(dx) < 40) return;
+          setIdx((i) => (dx < 0 ? (i + 1) % cards.length : (i - 1 + cards.length) % cards.length));
+        }}
+      >
         {/* decorative shapes */}
         <div className="pointer-events-none absolute -right-10 -top-16 h-48 w-48 rotate-12 rounded-[2.5rem] bg-white/10" />
         <div className="pointer-events-none absolute -left-12 bottom-[-4.5rem] h-44 w-64 -rotate-12 rounded-[2.5rem] bg-white/10" />
@@ -96,7 +109,7 @@ export function BankCardVisual({ cards, holder }: { cards: BankCardData[]; holde
           <div className="mb-1.5 flex justify-between text-xs">
             <span className="text-muted-foreground">Limite usado</span>
             <span className="tabular font-semibold">
-              {brl(used)} <span className="text-muted-foreground">/ {brl(limit)}</span>
+              {mask(brl(used))} <span className="text-muted-foreground">/ {mask(brl(limit))}</span>
             </span>
           </div>
           <div className="h-1.5 overflow-hidden rounded-full bg-secondary">
@@ -113,7 +126,7 @@ export function BankCardVisual({ cards, holder }: { cards: BankCardData[]; holde
                 key={card.id}
                 onClick={() => setIdx(i)}
                 aria-label={`Cartão ${card.name}`}
-                className={cn("h-1.5 rounded-full transition-all", i === idx ? "w-5 bg-primary" : "w-1.5 bg-border")}
+                className={cn("h-1.5 rounded-full transition-all touch:h-2", i === idx ? "w-5 bg-primary" : "w-1.5 bg-border")}
               />
             ))}
           </div>

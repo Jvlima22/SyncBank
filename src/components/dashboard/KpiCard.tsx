@@ -3,6 +3,7 @@ import { Area, AreaChart, ResponsiveContainer } from "recharts";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { brl } from "@/lib/finance";
+import { usePrivacy } from "@/hooks/usePrivacy";
 
 interface KpiCardProps {
   label: string;
@@ -16,6 +17,7 @@ interface KpiCardProps {
 
 export function KpiCard({ label, value, series, change, tone, invert }: KpiCardProps) {
   const id = useId().replace(/:/g, "");
+  const { mask } = usePrivacy();
   const color = `hsl(var(--${tone}))`;
   const data = series.length > 1 ? series : [{ day: 0, value: 0 }, { day: 1, value: 0 }];
   const good = change === null ? null : invert ? change <= 0 : change >= 0;
@@ -29,7 +31,7 @@ export function KpiCard({ label, value, series, change, tone, invert }: KpiCardP
         </span>
       </div>
       <div className="mt-1 flex items-baseline gap-2">
-        <p className="tabular text-2xl font-extrabold tracking-tight">{brl(value)}</p>
+        <p className="tabular text-xl font-extrabold tracking-tight sm:text-2xl">{mask(brl(value))}</p>
         {change !== null && (
           <span
             className={cn(

@@ -17,7 +17,7 @@ export function TransactionsTable({ items }: { items: ActivityItem[] }) {
     <div className="panel p-5">
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <h3 className="text-base font-bold">Histórico de transações</h3>
-        <div className="flex rounded-full border border-border p-1 text-xs font-semibold">
+        <div className="flex w-full rounded-full border border-border p-1 text-xs font-semibold sm:w-auto">
           {(
             [
               ["all", "Todas"],
@@ -29,7 +29,7 @@ export function TransactionsTable({ items }: { items: ActivityItem[] }) {
               key={k}
               onClick={() => setFilter(k)}
               className={cn(
-                "rounded-full px-3 py-1.5 transition-colors",
+                "flex-1 rounded-full px-3 py-1.5 transition-colors touch:py-2",
                 filter === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
               )}
             >
@@ -39,7 +39,30 @@ export function TransactionsTable({ items }: { items: ActivityItem[] }) {
         </div>
       </div>
 
-      <div className="overflow-x-auto">
+      {/* Celular: lista */}
+      <ul className="divide-y divide-border md:hidden">
+        {rows.length === 0 ? (
+          <li className="py-10 text-center text-sm text-muted-foreground">Nenhuma transação {filter !== "all" && "nesse filtro"}.</li>
+        ) : (
+          rows.map((t) => (
+            <li key={t.id} className="flex items-center gap-3 py-3">
+              <CategoryIcon category={t.category} positive={t.amount > 0} />
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold">{t.title}</p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {t.subtitle} · {parseDate(t.date).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
+                </p>
+              </div>
+              <span className={cn("tabular whitespace-nowrap text-sm font-bold", t.amount > 0 ? "text-income" : "text-expense")}>
+                {brl(t.amount, { sign: true })}
+              </span>
+            </li>
+          ))
+        )}
+      </ul>
+
+      {/* Desktop: tabela */}
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full min-w-[560px] text-sm">
           <thead>
             <tr className="border-b border-border text-left text-xs text-muted-foreground">

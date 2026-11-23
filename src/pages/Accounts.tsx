@@ -179,7 +179,7 @@ export default function Accounts() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
               Contas Bancárias
             </h1>
             <p className="text-muted-foreground">
@@ -245,7 +245,7 @@ export default function Accounts() {
         </Alert>
 
         {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1 max-sm:[&_.p-6]:p-4">
           <Card className="glass">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
@@ -253,7 +253,7 @@ export default function Accounts() {
                   <p className="text-sm text-muted-foreground">
                     Patrimônio Total
                   </p>
-                  <p className="text-3xl font-bold text-foreground">
+                  <p className="text-2xl font-bold text-foreground sm:text-3xl">
                     {formatBalance(totalBalance)}
                   </p>
                 </div>
@@ -270,7 +270,7 @@ export default function Accounts() {
                   <p className="text-sm text-muted-foreground">
                     Fatura Cartões
                   </p>
-                  <p className="text-3xl font-bold text-destructive">
+                  <p className="tabular text-lg font-bold sm:text-3xl text-destructive">
                     {formatBalance(totalCredit)}
                   </p>
                 </div>
@@ -287,7 +287,7 @@ export default function Accounts() {
                   <p className="text-sm text-muted-foreground">
                     Contas Conectadas
                   </p>
-                  <p className="text-3xl font-bold text-foreground">
+                  <p className="text-2xl font-bold text-foreground sm:text-3xl">
                     {accounts.length}
                   </p>
                   <p className="text-sm text-success">

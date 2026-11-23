@@ -246,7 +246,7 @@ export default function Income() {
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">
+            <h1 className="text-2xl font-bold text-foreground sm:text-3xl">
               Receitas Manuais
             </h1>
             <p className="text-muted-foreground">
@@ -260,13 +260,13 @@ export default function Income() {
         </div>
 
         {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1 max-sm:[&_.p-6]:p-4">
           <Card className="glass">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Total Recebido</p>
-                  <p className="text-3xl font-bold text-success">
+                  <p className="tabular text-lg font-bold sm:text-3xl text-success">
                     R$ {totalReceived.toLocaleString("pt-BR")}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -284,7 +284,7 @@ export default function Income() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground">Pendente</p>
-                  <p className="text-3xl font-bold text-warning">
+                  <p className="tabular text-lg font-bold sm:text-3xl text-warning">
                     R$ {totalPending.toLocaleString("pt-BR")}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -304,7 +304,7 @@ export default function Income() {
                   <p className="text-sm text-muted-foreground">
                     Total de Registros
                   </p>
-                  <p className="text-3xl font-bold text-foreground">
+                  <p className="text-2xl font-bold text-foreground sm:text-3xl">
                     {incomes.length}
                   </p>
                   <p className="text-sm text-muted-foreground mt-1">
@@ -334,7 +334,7 @@ export default function Income() {
               </div>
               <div className="flex gap-2">
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[150px]">
+                  <SelectTrigger className="w-full sm:w-[150px]">
                     <Filter className="mr-2 h-4 w-4" />
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
@@ -646,7 +646,7 @@ export default function Income() {
               <div className="space-y-4 py-4">
                 <div className="p-4 rounded-xl bg-success/10 text-center">
                   <p className="text-sm text-muted-foreground">Valor</p>
-                  <p className="text-3xl font-bold text-success">
+                  <p className="tabular text-lg font-bold sm:text-3xl text-success">
                     R$ {selectedIncome.amount.toLocaleString("pt-BR")}
                   </p>
                 </div>

@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+import { Eye, EyeOff } from "lucide-react";
+import { usePrivacy } from "@/hooks/usePrivacy";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { BankCardVisual } from "@/components/dashboard/BankCardVisual";
 import { KpiCard } from "@/components/dashboard/KpiCard";
@@ -37,6 +39,7 @@ const Index = () => {
   const { cards } = useCards();
 
   const now = new Date();
+  const { hidden, toggle, mask } = usePrivacy();
   const fullName = profile?.full_name || user?.email?.split("@")[0] || "você";
   const firstName = fullName.split(" ")[0];
 
@@ -102,13 +105,22 @@ const Index = () => {
             <p className="text-sm text-muted-foreground">
               {now.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
             </p>
-            <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+            <h1 className="text-[22px] font-extrabold leading-tight tracking-tight sm:text-3xl">
               {greet}, {firstName} <span className="inline-block origin-[70%_70%] animate-[wave_2s_ease-in-out_1]">👋</span>
             </h1>
           </div>
-          <div className="text-right">
+          <div className="w-full sm:w-auto sm:text-right">
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">Saldo em contas</p>
-            <p className="tabular text-2xl font-extrabold tracking-tight sm:text-3xl">{brl(balance)}</p>
+            <div className="flex items-center gap-2 sm:justify-end">
+              <p className="tabular text-2xl font-extrabold tracking-tight sm:text-3xl">{mask(brl(balance))}</p>
+              <button
+                onClick={toggle}
+                aria-label={hidden ? "Mostrar valores" : "Ocultar valores"}
+                className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground hover:bg-secondary touch:h-11 touch:w-11"
+              >
+                {hidden ? <EyeOff className="h-[18px] w-[18px]" /> : <Eye className="h-[18px] w-[18px]" />}
+              </button>
+            </div>
           </div>
         </div>
 

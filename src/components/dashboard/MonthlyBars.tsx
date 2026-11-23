@@ -19,7 +19,8 @@ export function MonthlyBars({ data }: { data: { label: string; value: number }[]
         </span>
       </div>
 
-      <div className="relative mt-4 min-h-[240px] flex-1">
+      <div className="-mx-5 mt-4 flex-1 overflow-x-auto px-5 [scrollbar-width:none]">
+      <div className="relative h-full min-h-[240px] min-w-[520px]">
         {empty && (
           <div className="absolute inset-0 z-10 flex items-center justify-center">
             <p className="rounded-full bg-secondary px-4 py-2 text-xs font-medium text-muted-foreground">
@@ -62,6 +63,7 @@ export function MonthlyBars({ data }: { data: { label: string; value: number }[]
             </Bar>
           </BarChart>
         </ResponsiveContainer>
+      </div>
       </div>
     </div>
   );

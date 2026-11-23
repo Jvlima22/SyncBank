@@ -259,7 +259,7 @@ const Cards = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4 [&>*:last-child:nth-child(odd)]:col-span-2 md:[&>*:last-child:nth-child(odd)]:col-span-1 max-sm:[&_.p-6]:p-4">
           <Card className="bg-card border-border animate-slide-up">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">

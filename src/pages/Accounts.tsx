@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { BankConnections } from "@/components/banking/BankConnections";
+import { AccountTransactionsSheet, SheetAccount } from "@/components/banking/AccountTransactionsSheet";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +69,7 @@ export default function Accounts() {
   const [connectDialogOpen, setConnectDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<typeof accounts[0] | null>(null);
+  const [sheetAccount, setSheetAccount] = useState<SheetAccount | null>(null);
   const [newAccount, setNewAccount] = useState({
     bank: "",
     type: "" as "checking" | "savings" | "credit" | "investment" | "",
@@ -317,10 +319,10 @@ export default function Accounts() {
                       <span className="text-2xl">{account.icon || "🏦"}</span>
                       <div>
                         <CardTitle className="text-base">
-                          {account.name}
+                          {account.bank_name}
                         </CardTitle>
-                        <p className="text-xs text-muted-foreground">
-                          {config.label}
+                        <p className="max-w-[180px] truncate text-xs text-muted-foreground">
+                          {config.label} · {account.name}
                         </p>
                       </div>
                     </div>
@@ -350,21 +352,18 @@ export default function Accounts() {
 
                   <div className="flex items-center justify-between pt-2 border-t border-border">
                     <p className="text-xs text-muted-foreground">
-                      Última sync: agora
+                      {account.last_sync_at
+                        ? `Última sync: ${new Date(account.last_sync_at).toLocaleString("pt-BR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" })}`
+                        : "Conta manual"}
                     </p>
                     <div className="flex gap-1">
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => handleSync(account.id)}
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-full"
+                        onClick={() => setSheetAccount(account)}
                       >
-                        <RefreshCw
-                          className={cn(
-                            "h-4 w-4",
-                            syncing === account.id && "animate-spin"
-                          )}
-                        />
+                        Ver extrato
                       </Button>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -377,7 +376,7 @@ export default function Accounts() {
                             <Edit className="mr-2 h-4 w-4" />
                             Editar
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => navigate("/transactions")}>
+                          <DropdownMenuItem onClick={() => setSheetAccount(account)}>
                             <ExternalLink className="mr-2 h-4 w-4" />
                             Ver Transações
                           </DropdownMenuItem>
@@ -501,6 +500,7 @@ export default function Accounts() {
           </DialogContent>
         </Dialog>
       </div>
+      <AccountTransactionsSheet account={sheetAccount} onOpenChange={(o) => !o && setSheetAccount(null)} />
     </DashboardLayout>
   );
 }

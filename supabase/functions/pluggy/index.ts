@@ -62,6 +62,20 @@ const CATEGORY_PT: Record<string, string> = {
   "Transfer - PIX": "Transferência", "Same person transfer": "Transferência", Transfers: "Transferência",
   Education: "Educação", Travel: "Viagem", Taxes: "Impostos", "Bank fees": "Tarifas", Investments: "Investimentos",
 };
+const KNOWN_BANKS: [RegExp, string][] = [
+  [/nu pagamentos|nubank/i, "Nubank"], [/ita[uú]/i, "Itaú"], [/\bc6\b/i, "C6 Bank"], [/\binter\b/i, "Inter"],
+  [/bradesco/i, "Bradesco"], [/santander/i, "Santander"], [/caixa/i, "Caixa"], [/banco do brasil/i, "Banco do Brasil"],
+  [/picpay/i, "PicPay"], [/mercado ?pago/i, "Mercado Pago"], [/btg/i, "BTG Pactual"], [/xp /i, "XP"], [/sicoob/i, "Sicoob"],
+  [/sicredi/i, "Sicredi"], [/neon/i, "Neon"], [/pagbank|pagseguro/i, "PagBank"], [/ticket/i, "Ticket"],
+];
+// No MeuPluggy o conector é sempre "MeuPluggy": identifica o banco pelo nome da conta.
+function bankName(item: any, a: any) {
+  const conn = item.connector?.name as string | undefined;
+  if (conn && !/meu ?pluggy/i.test(conn)) return conn;
+  const text = `${a.name ?? ""} ${a.marketingName ?? ""}`;
+  for (const [re, name] of KNOWN_BANKS) if (re.test(text)) return name;
+  return (a.marketingName || a.name || conn || "Banco").replace(/\s*\(.*\)\s*$/, "");
+}
 const BRANDS = ["visa", "mastercard", "elo", "amex", "hipercard"];
 const dayOf = (d?: string | null) => (d ? new Date(d).getUTCDate() : null);
 const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -103,6 +117,7 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
 
   for (const a of accounts) {
     let localAccountId: string | null = null;
+    const bank = bankName(item, a);
     let label = a.marketingName || a.name;
 
     if (a.type === "CREDIT") {
@@ -116,7 +131,7 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
           external_id: a.id,
           connection_id: conn.id,
           source: "pluggy",
-          name: `${item.connector?.name ?? ""} ${label}`.trim(),
+          name: `${bank} · ${label}`,
           brand: BRANDS.includes(brand) ? brand : "other",
           last_four_digits: String(a.number ?? "").replace(/\D/g, "").slice(-4) || null,
           credit_limit: limit,
@@ -139,7 +154,7 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
             connection_id: conn.id,
             source: "pluggy",
             name: label,
-            bank_name: item.connector?.name ?? "Banco",
+            bank_name: bank,
             account_type: a.subtype === "SAVINGS_ACCOUNT" ? "savings" : "checking",
             balance: a.balance ?? 0,
             currency: a.currencyCode ?? "BRL",
@@ -153,8 +168,9 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
         .single();
       if (error) throw error;
       localAccountId = acc.id;
-      label = item.connector?.name ?? label;
+      label = bank;
     }
+    if (a.type === "CREDIT") label = `${bank} · Cartão`;
 
     // Transações (v2, paginação por cursor: `next` já vem como query string pronta)
     let next: string | null = `?accountId=${a.id}&dateFrom=${iso(since)}`;

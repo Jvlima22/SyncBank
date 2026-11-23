@@ -90,7 +90,11 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
   if (ce) throw ce;
   if (conn.user_id !== userId) throw new Error("Conexão pertence a outro usuário");
 
-  const since = conn.last_sync_at
+  const { count: existingTx } = await db
+    .from("transactions")
+    .select("id", { count: "exact", head: true })
+    .eq("connection_id", conn.id);
+  const since = conn.last_sync_at && (existingTx ?? 0) > 0
     ? new Date(new Date(conn.last_sync_at).getTime() - 7 * 864e5)
     : new Date(Date.now() - 365 * 864e5);
 
@@ -152,12 +156,12 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
       label = item.connector?.name ?? label;
     }
 
-    // Transações (paginadas)
-    let page = 1;
-    let totalPages = 1;
-    do {
-      const res = await pluggy(`/transactions?accountId=${a.id}&from=${iso(since)}&pageSize=500&page=${page}`);
-      totalPages = res.totalPages ?? 1;
+    // Transações (v2, paginação por cursor: `next` já vem como query string pronta)
+    let next: string | null = `?accountId=${a.id}&dateFrom=${iso(since)}`;
+    let guard = 0;
+    while (next && guard++ < 200) {
+      const res = await pluggy(`/v2/transactions${next}`);
+      next = res.next ?? null;
       const rows = (res.results ?? []).map((t: any) => {
         const isIncome = t.type === "CREDIT";
         const amt = Math.abs(t.amount ?? 0);
@@ -183,8 +187,7 @@ async function syncItem(db: SupabaseClient, userId: string, itemId: string) {
         if (error) throw error;
         txCount += rows.length;
       }
-      page++;
-    } while (page <= totalPages);
+    }
   }
 
   await db.from("bank_connections").update({ last_sync_at: new Date().toISOString() }).eq("id", conn.id);

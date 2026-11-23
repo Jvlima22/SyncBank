@@ -46,14 +46,14 @@ export default function Auth() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-dvh items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="grid min-h-screen lg:grid-cols-2">
+    <div className="grid min-h-dvh lg:grid-cols-2">
       {/* Visual side */}
       <div className="relative hidden overflow-hidden bg-[hsl(150_12%_4%)] lg:block">
         <div className="absolute inset-0 bg-[radial-gradient(40rem_30rem_at_20%_20%,hsl(140_80%_30%/0.45),transparent_60%),radial-gradient(35rem_30rem_at_90%_90%,hsl(210_90%_45%/0.4),transparent_60%),radial-gradient(25rem_20rem_at_70%_30%,hsl(82_85%_50%/0.25),transparent_60%)]" />

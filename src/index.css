@@ -113,6 +113,25 @@
 
   html {
     @apply scroll-smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* iOS dá zoom em campos com fonte < 16px: no celular forçamos 16px */
+  @media (max-width: 767px) {
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    textarea,
+    button[role="combobox"] {
+      font-size: 16px !important;
+    }
+  }
+
+  /* Evita "puxar" a página inteira (bounce) atrás de gavetas e menus */
+  html,
+  body {
+    overscroll-behavior-y: none;
   }
 
   body {

@@ -119,7 +119,7 @@ export function Header({ onMenuClick }: { onMenuClick?: () => void }) {
 
   return (
     <>
-      <header className="sticky top-0 z-30 flex h-[72px] items-center justify-between gap-3 bg-background/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-30 flex h-[calc(64px+env(safe-area-inset-top))] pt-[env(safe-area-inset-top)] sm:h-[calc(72px+env(safe-area-inset-top))] items-center justify-between gap-3 bg-background/70 px-4 backdrop-blur-xl sm:px-6 lg:px-8">
         <div className="flex min-w-0 flex-1 items-center gap-3">
           <button onClick={onMenuClick} className="rounded-xl border border-border bg-card p-2 lg:hidden" aria-label="Abrir menu">
             <Menu className="h-5 w-5" />

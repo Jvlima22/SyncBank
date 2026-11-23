@@ -102,5 +102,9 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    // `touch:` = telas de toque (celular/tablet)
+    ({ addVariant }: { addVariant: (n: string, v: string) => void }) => addVariant("touch", "@media (pointer: coarse)"),
+  ],
 } satisfies Config;

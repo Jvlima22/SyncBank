@@ -52,7 +52,7 @@ function MfaChallenge({ onDone, onCancel }: { onDone: () => void; onCancel: () =
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="flex min-h-dvh items-center justify-center p-4">
       <div className="panel w-full max-w-sm space-y-6 p-8 text-center">
         <div className="flex justify-center">
           <Logo />
@@ -120,7 +120,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading || (user && aal === "checking")) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-dvh items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
